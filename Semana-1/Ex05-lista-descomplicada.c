@@ -21,7 +21,7 @@ celula *cria_lista()
 void insere_no_fim( int num, celula *lista )
 {
     celula *fim, *nova = ( celula * )malloc( sizeof( celula ) );
-    for( fim = lista; fim->prox != NULL; fim = fim->prox);
+    for( fim = lista; fim->prox != NULL; fim = fim->prox );
     nova->num = num;
     nova->prox = fim->prox;
     fim->prox = nova;
