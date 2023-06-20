@@ -25,6 +25,16 @@ void insert_in_the_end ( int val, Node *list )
     new->prev = end;
 }
 
+Node *delete_list ( Node *list )
+{
+    Node *p = list, *temp = NULL;
+    while ( p != NULL ){
+        temp = p->next;
+        free( p );
+        p = temp;
+    }
+    return NULL;
+}
 bool isPalindrome (  Node *list )
 {
     Node *p, *q, *r;
@@ -56,4 +66,7 @@ int main ( void )
         printf ( "\ntrue");
     else
         printf ( "\nfalse" );
+
+    list = delete_list ( list );
+    return 0;
 }
