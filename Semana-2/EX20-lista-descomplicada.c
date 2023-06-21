@@ -81,6 +81,7 @@ float distancia ( int cid_1, int cid_2, celula *lista )
     celula *p, *q;
     float dist;
     for ( p = lista->prox; p != NULL && i != cid_1; p = p->prox, i++ );
+    i = 0;
     for ( q = lista->prox; q != NULL && i != cid_2; q = q->prox, i++ );
 
     dist = sqrt ( pow ( p->local.x - q->local.x ,2 ) + pow ( p->local.y - q->local.y ,2 ) );
