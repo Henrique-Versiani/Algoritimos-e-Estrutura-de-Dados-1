@@ -60,7 +60,7 @@ int menu ( void )
         printf ( "1: imprime\n2: calcular distancia\n3: Sair\n" );
         scanf  ( "%d", &escolha );
         getchar( );
-    }while ( escolha < 1 || escolha > 3);
+    }while ( escolha < 1 || escolha > 3 );
     return escolha;
 }
 
@@ -84,7 +84,7 @@ float distancia ( int cid_1, int cid_2, celula *lista )
     i = 0;
     for ( q = lista->prox; q != NULL && i != cid_2; q = q->prox, i++ );
 
-    dist = sqrt ( pow ( p->local.x - q->local.x ,2 ) + pow ( p->local.y - q->local.y ,2 ) );
+    dist = sqrt ( pow ( p->local.x - q->local.x , 2 ) + pow ( p->local.y - q->local.y , 2 ) );
     return dist;
 }
 
@@ -98,16 +98,16 @@ int main ( void )
 
     printf ( "Digite a quantidade de cidades a serem inseridas: " );
     scanf  ( "%d", &N );
-    getchar();
+    getchar( );
     for ( i = 0; i < N; i++ ){
-        printf ( "\nDigite o nome da cidade: ");
+        printf ( "\nDigite o nome da cidade: " );
         scanf  ( "%[^\n]s", nome );
-        printf ( "\nDigite a coordenada x: ");
+        printf ( "\nDigite a coordenada x: " );
         scanf  ( "%d", &local.x );
-        printf ( "\nDigite a coordenada y: ");
+        printf ( "\nDigite a coordenada y: " );
         scanf  ( "%d", &local.y );
-        getchar();
-        insere_no_fim (nome, local, lista );
+        getchar( );
+        insere_no_fim ( nome, local, lista );
     }
     for ( ;; ){
         mainmenu = menu( );
