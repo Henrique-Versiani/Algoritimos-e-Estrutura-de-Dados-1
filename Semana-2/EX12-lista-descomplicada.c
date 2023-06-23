@@ -1,8 +1,8 @@
-/*12. Considere um cadastro de produtos de um estoque, com as seguintes informac¸oes para ˜
+/*12. Considere um cadastro de produtos de um estoque, com as seguintes informacoes para
 cada produto:
-• Codigo de identificacao do produto: representado por um valor inteiro ˜
-• Nome do produto: com ate 50 caracteres ´
-• Quantidade disponıvel no estoque: representado por um numero inteiro ´
+• Codigo de identificacao do produto: representado por um valor inteiro
+• Nome do produto: com ate 50 caracteres
+• Quantidade disponıvel no estoque: representado por um numero inteiro
 • Prec¸o de venda: representado por um valor real
 (a) Defina uma estrutura, denominada produto, que tenha os campos apropriados para
 guardar as informacoes de um produto
@@ -13,6 +13,7 @@ usuario para entrar com as informacoes de cada produto
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct cel{
     float preco;
