@@ -1,4 +1,12 @@
-struct ListNode* reverseList(struct ListNode* head){
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode{
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* reverseList( struct ListNode* head ){
     struct ListNode *headReverse = ( struct ListNode * )malloc( sizeof( struct ListNode ) );
     struct ListNode *curr = head;
     headReverse->next = NULL;
