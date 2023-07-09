@@ -5,7 +5,7 @@
 
 char *shortestCompletingWord( char *licensePlate, char **words, int wordsSize );
 
-int main(){
+int main( void ){
 
     char licensePlate[] = "1s3 456";
     char *words[4] = {"looks","pest","stew","show"};
@@ -17,14 +17,13 @@ int main(){
     return 0;
 }
 
-char * shortestCompletingWord(char * licensePlate, char ** words, int wordsSize){
+char *shortestCompletingWord(char * licensePlate, char ** words, int wordsSize){
     int i, j = 0, count = 0, Size_LP = strlen( licensePlate );
     char only_letters[strlen( licensePlate )];
 
-    for ( i = 0; i < Size_LP; i++ )
-    {
-        if ( isdigit( licensePlate[i] ) == 0 && licensePlate[i] != ' ' )//<-----Insere apenas quando não for número ou espaço
-        {                                                                   
+    for ( i = 0; i < Size_LP; i++ ) {
+        if ( isdigit( licensePlate[i] ) == 0 && licensePlate[i] != ' ' ) {//<---Insere apenas quando não for número ou espaço
+                                                                   
             only_letters[j++] = tolower( licensePlate[i] );//<------------------licensePlate sem númuros, espaços e letras maiúsculas
             count++;
         }
@@ -35,15 +34,12 @@ char * shortestCompletingWord(char * licensePlate, char ** words, int wordsSize)
     int saveCount = count, k = 0, l = 0;
     int flag[15][wordsSize];
     int Size_words;
-    for ( i = 0; i < wordsSize; i++ )//<----------------------------------------percorre cada palavra da words[i]
-    {
+    for ( i = 0; i < wordsSize; i++ ) {//<--------------------------------------percorre cada palavra da words[i]
         count = saveCount;//<---------------------------------------------------renova o valor de cont
         Size_words = strlen( words[i] );
-        for ( j = 0; j < saveCount; j++ )//<------------------------------------percorre a string only_letters
-        {
-            for ( k = 0; k < Size_words; k++ )//<-------------------------------percorre caractere a caractere do words[i]
-            {
-                if ( only_letters[j] == words[i][k] && flag[k][i] != -1 ){
+        for ( j = 0; j < saveCount; j++ ) {//<----------------------------------percorre a string only_letters
+            for ( k = 0; k < Size_words; k++ ) {//<-----------------------------percorre caractere a caractere do words[i]
+                if ( only_letters[j] == words[i][k] && flag[k][i] != -1 ) {
                     count--;
                     flag[k][i] = -1;
                     break;
@@ -59,15 +55,12 @@ char * shortestCompletingWord(char * licensePlate, char ** words, int wordsSize)
     Size_SW = strlen( shortestWord[0] );
     j = 0;
 
-    for ( i = 0; i < l; i++ )//<------------------------------------------------percorre a shortestWord para descobrir a menor
-    {
+    for ( i = 0; i < l; i++ ) {//<----------------------------------------------percorre a shortestWord para descobrir a menor
         Size_curr = strlen( shortestWord[i] );
-        if( Size_SW > Size_curr )
-        {
+        if( Size_SW > Size_curr ) {
             Size_SW = strlen( shortestWord[i] );
             j = i;//<-----------------------------------------------------------armazena a posição do menor
         }
-
     }
     return shortestWord[j];
 }
