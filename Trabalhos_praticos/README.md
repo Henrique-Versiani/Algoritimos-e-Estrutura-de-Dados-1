@@ -2,7 +2,7 @@ Henrique Colares Versiani - M2 AED1
 
 Convenção usada: https://fabiensanglard.net/fd_proxy/doom3/CodeStyleConventions.pdf Link para o LeetCode: https://leetcode.com/problems/shortest-completing-word/description/
 
-O código feito em aula estava incompleto, mas consegui terminá-lo em casa. Os resultados do doctor memory foram gerados usando as 3 entradas abaixo:
+Sou da M2, mas fiz no horário da M1 então fiquei com o mesmo exercício da M1. O código feito em aula estava incompleto, mas consegui terminá-lo em casa. Os resultados do doctor memory foram gerados usando as 3 entradas abaixo:
 
 Teste 1:
 
