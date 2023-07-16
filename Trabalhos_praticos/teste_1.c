@@ -29,7 +29,7 @@ char *shortestCompletingWord(char * licensePlate, char ** words, int wordsSize){
         }
         only_letters[j] = '\0';//<----------------------------------------------marca o final da string
     }
-
+    printf( "%s", only_letters);
     char *shortestWord[wordsSize];//<-------------------------------------------variável que vai receber cada string compatível
     int saveCount = count, k = 0, l = 0;
     int flag[15][wordsSize];
