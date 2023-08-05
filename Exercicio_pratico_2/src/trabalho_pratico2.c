@@ -6,7 +6,7 @@ typedef struct{
     int val;
 }Preferences;
 
-typedef struct TypeQueue{
+typedef struct{
     Preferences info;
     struct TypeQueue *pNext;
 }TypeQueue;
