@@ -1,59 +1,59 @@
 Dr. Memory version 2.5.0 build 0 built on Oct 18 2021 03:10:43
 Windows version: WinVer=105;Rel=2009;Build=19045;Edition=Core
-Dr. Memory results for pid 1444: "teste1.exe"
+Dr. Memory results for pid 4316: "teste1.exe"
 Application cmdline: ""H:\Meus documentos\Ãrea de trabalho\Algoritimos-e-Estrutura-de-Dados-1\Exercicio_pratico_2\output\teste1.exe""
 Recorded 124 suppression(s) from default D:\Program Files\Dr.memory\bin\suppress-default.txt
 
 Error #1: UNINITIALIZED READ: reading register eax
-# 0 KERNELBASE.dll!FindNextFileW                   +0x20e    (0x76efa0ae <KERNELBASE.dll+0x11a0ae>)
-# 1 KERNELBASE.dll!FindNextFileA                   +0x33     (0x76efc984 <KERNELBASE.dll+0x11c984>)
+# 0 KERNELBASE.dll!FindNextFileW                   +0x20e    (0x75fea0ae <KERNELBASE.dll+0x11a0ae>)
+# 1 KERNELBASE.dll!FindNextFileA                   +0x33     (0x75fec984 <KERNELBASE.dll+0x11c984>)
 # 2 .text                                           [../../../src/gcc-6.3.0/libgcc/config/i386/cygwin.S:184]
 # 3 __mingw_glob                                    [../../../src/gcc-6.3.0/libgcc/config/i386/cygwin.S:184]
-# 4 _setargv                                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:115]
+# 4 _setargv                                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:140]
 # 5 .text     
 # 6 mainCRTStartup
-# 7 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0x11d    (0x77097b1e <ntdll.dll+0x67b1e>)
-# 8 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0xed     (0x77097aee <ntdll.dll+0x67aee>)
-Note: @0:00:00.239 in thread 5628
+# 7 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0x11d    (0x77c77b1e <ntdll.dll+0x67b1e>)
+# 8 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0xed     (0x77c77aee <ntdll.dll+0x67aee>)
+Note: @0:00:00.244 in thread 10920
 Note: instruction: cmp    %eax $0x0000001a
 
 Error #2: UNINITIALIZED READ: reading register eax
-# 0 KERNELBASE.dll!FindNextFileW                   +0x23b    (0x76efa0db <KERNELBASE.dll+0x11a0db>)
-# 1 KERNELBASE.dll!FindNextFileA                   +0x33     (0x76efc984 <KERNELBASE.dll+0x11c984>)
+# 0 KERNELBASE.dll!FindNextFileW                   +0x23b    (0x75fea0db <KERNELBASE.dll+0x11a0db>)
+# 1 KERNELBASE.dll!FindNextFileA                   +0x33     (0x75fec984 <KERNELBASE.dll+0x11c984>)
 # 2 .text                                           [../../../src/gcc-6.3.0/libgcc/config/i386/cygwin.S:184]
 # 3 __mingw_glob                                    [../../../src/gcc-6.3.0/libgcc/config/i386/cygwin.S:184]
-# 4 _setargv                                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:115]
+# 4 _setargv                                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:140]
 # 5 .text     
 # 6 mainCRTStartup
-# 7 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0x11d    (0x77097b1e <ntdll.dll+0x67b1e>)
-# 8 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0xed     (0x77097aee <ntdll.dll+0x67aee>)
-Note: @0:00:00.239 in thread 5628
+# 7 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0x11d    (0x77c77b1e <ntdll.dll+0x67b1e>)
+# 8 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0xed     (0x77c77aee <ntdll.dll+0x67aee>)
+Note: @0:00:00.245 in thread 10920
 Note: instruction: data16 mov    %cx -> 0x00000234(%ebx,%eax,2)
 
 Error #3: UNINITIALIZED READ: reading register eax
-# 0 KERNELBASE.dll!FindNextFileW                   +0x167    (0x76efa007 <KERNELBASE.dll+0x11a007>)
-# 1 KERNELBASE.dll!FindNextFileA                   +0x33     (0x76efc984 <KERNELBASE.dll+0x11c984>)
+# 0 KERNELBASE.dll!FindNextFileW                   +0x167    (0x75fea007 <KERNELBASE.dll+0x11a007>)
+# 1 KERNELBASE.dll!FindNextFileA                   +0x33     (0x75fec984 <KERNELBASE.dll+0x11c984>)
 # 2 .text                                           [../../../src/gcc-6.3.0/libgcc/config/i386/cygwin.S:184]
 # 3 __mingw_glob                                    [../../../src/gcc-6.3.0/libgcc/config/i386/cygwin.S:184]
-# 4 _setargv                                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:115]
+# 4 _setargv                                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:140]
 # 5 .text     
 # 6 mainCRTStartup
-# 7 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0x11d    (0x77097b1e <ntdll.dll+0x67b1e>)
-# 8 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0xed     (0x77097aee <ntdll.dll+0x67aee>)
-Note: @0:00:00.246 in thread 5628
+# 7 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0x11d    (0x77c77b1e <ntdll.dll+0x67b1e>)
+# 8 ntdll.dll!RtlGetAppContainerNamedObjectPath    +0xed     (0x77c77aee <ntdll.dll+0x67aee>)
+Note: @0:00:00.252 in thread 10920
 Note: instruction: test   %eax %eax
 
-Error #4: LEAK 8 direct bytes 0x011f0f58-0x011f0f60 + 8 indirect bytes
+Error #4: LEAK 8 direct bytes 0x012c0f58-0x012c0f60 + 0 indirect bytes
 # 0 replace_malloc               [d:\a\drmemory\drmemory\common\alloc_replace.c:2580]
-# 1 RESET                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:42]
-# 2 countStudents                [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:88]
-# 3 main                         [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:31]
+# 1 RESET                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:43]
+# 2 countStudents                [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:109]
+# 3 main                         [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:32]
 
-Error #5: LEAK 8 direct bytes 0x011f0f80-0x011f0f88 + 8 indirect bytes
+Error #5: LEAK 8 direct bytes 0x012c0f80-0x012c0f88 + 0 indirect bytes
 # 0 replace_malloc               [d:\a\drmemory\drmemory\common\alloc_replace.c:2580]
-# 1 RESET                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:42]
-# 2 countStudents                [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:89]
-# 3 main                         [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:31]
+# 1 RESET                        [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:43]
+# 2 countStudents                [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:110]
+# 3 main                         [h:/Meus documentos/Área de trabalho/Algoritimos-e-Estrutura-de-Dados-1/Exercicio_pratico_2/teste1.c:32]
 
 ===========================================================================
 FINAL SUMMARY:
@@ -71,9 +71,9 @@ ERRORS FOUND:
       0 unique,     0 total GDI usage error(s)
       0 unique,     0 total handle leak(s)
       0 unique,     0 total warning(s)
-      2 unique,     2 total,     32 byte(s) of leak(s)
+      2 unique,     2 total,     16 byte(s) of leak(s)
       0 unique,     0 total,      0 byte(s) of possible leak(s)
 ERRORS IGNORED:
       6 unique,     6 total,   4495 byte(s) of still-reachable allocation(s)
          (re-run with "-show_reachable" for details)
-Details: C:\Users\sombr\AppData\Roaming\Dr. Memory\DrMemory-teste1.exe.1444.000\results.txt
+Details: C:\Users\sombr\AppData\Roaming\Dr. Memory\DrMemory-teste1.exe.4316.000\results.txt
