@@ -96,6 +96,7 @@ Queue *freeQueue( Queue *pQueue )
     if( pQueue->pFirst == NULL )
         pQueue->pLast = NULL;
 
+    free( pQueue );
     return NULL;
 }
 

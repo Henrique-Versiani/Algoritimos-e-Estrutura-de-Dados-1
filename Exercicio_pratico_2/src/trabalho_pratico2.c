@@ -32,6 +32,8 @@ int main()
     int answer = countStudents( students, stSize, sandwiches, swSize );
 
     printf( "\n%d", answer );
+
+    printf("\n%d",sizeof(Queue));
     return 0;
 }
 
@@ -96,6 +98,7 @@ Queue *freeQueue( Queue *pQueue )
     if( pQueue->pFirst == NULL )
         pQueue->pLast = NULL;
 
+    free( pQueue );
     return NULL;
 }
 
