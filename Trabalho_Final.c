@@ -11,19 +11,39 @@ typedef struct matrix {
 
 Matrix *matrix_create( void );
 void matrix_print(Matrix* head);
+void matrix_setelem( Matrix* m, int x, int y, float elem );
 
 int main( void ) {
 
     Matrix *A = matrix_create();
-
     matrix_print(A);
+    
     return 0;
 }
 
+void matrix_setelem( Matrix* m, int x, int y, float elem )
+{
+    int nRows = 1, nCols = 1;
+    Matrix *new = ( Matrix * )malloc( sizeof( Matrix ) );
+    new->rows = x;
+    new->column = y;
+    new->info = elem;
+
+    Matrix *p, *q, *r, *s;
+    for ( r = m->right; r != m && y != nCols; r = r->right, nCols++ );
+    for ( s = m->below; s != m && x != nRows; s = s->below, nRows++ );
+
+    for ( p = s; p->right != s && p->right->column < y; p = p->right );
+    for ( q = r; q->below != r && q->below->rows < x; q = q->below );
+
+    new->right = p->right;
+    p->right = new;
+    new->below = q->below;
+    q->below = new;
+}
 
 Matrix *matrix_create( void ) {
     int i, j, m, n, flag;
-    char c;
     float value;
 
     printf( "\nEnter the number of rows and columns: " );
@@ -39,70 +59,52 @@ Matrix *matrix_create( void ) {
 
     Matrix *head_row[m], *head_col[n];
 
-     for (i = 0; i < m; i++) {
-        head_row[i] = (Matrix *)malloc(sizeof(Matrix));
+    for ( i = 0; i < m; i++ )
+    {
+        head_row[i] = ( Matrix * )malloc( sizeof( Matrix ) );
         head_row[i]->right = head_row[i];
-        head_row[i]->below = NULL;  // Initialize to NULL
-
-        // Connect the previous row's below to this row's below
-        if (i > 0)
-            head_row[i - 1]->below = head_row[i];
+        head_row[i]->below = NULL;
+        head_row[i]->rows = -1;
     }
 
-    for (i = 0; i < n; i++) {
-        head_col[i] = (Matrix *)malloc(sizeof(Matrix));
-        head_col[i]->right = NULL;  // Initialize to NULL
+    for ( i = 0; i < n; i++ )
+    {
+        head_col[i] = ( Matrix * )malloc( sizeof( Matrix ) );
         head_col[i]->below = head_col[i];
-
-        // Connect the previous column's right to this column's right
-        if (i > 0)
-            head_col[i - 1]->right = head_col[i];
+        head_col[i]->right = NULL;
+        head_col[i]->column = -1;
     }
 
     head->right = head_col[0];
     head->below = head_row[0];
 
-    for( i = 0; i < m - 1; i++ )
-        head_row[i]->right = head_row[i];
+    for ( i = 0; i < m - 1; i++ )
+        head_row[i]->below = head_row[i+1];
+
     head_row[i]->below = head;
 
-    for( i = 0; i < n - 1; i++ )
-        head_col[i]->below = head_col[i];
+    for ( i = 0; i < n - 1; i++ )
+        head_col[i]->right = head_col[i+1];
+
     head_col[i]->right = head;
 
-    for ( ;; )
-    {
+    for ( ;; ) {
         flag = 0;
-        do {
-            if( flag == 1 )
+        do
+        {
+            if ( flag == 1 )
                 printf( "\nInvalid value, insert again!!" );
+
             printf( "\nEnter row, column, value: " );
             scanf( "%d %d %f", &i, &j, &value );
             flag = 1;
             getchar();
-        }while( i > m || j > n || i < 1 || j < 1 );
+        } while ( i > m || j > n || i < 1 || j < 1 );
 
-        if ( i == 0 || j == 0 || value == 0 )
+        if ( value == 0 )
             break;
 
-        Matrix *new = ( Matrix * )malloc( sizeof( Matrix ) );
-        new->rows = i;
-        new->column = j;
-        new->info = value;
-
-        Matrix *p, *q;
-        for ( p = head_row[i-1]; p->right != head_row[i-1] && p->right->column < j; p = p->right );
-        for ( q = head_col[j-1]; q->below != head_col[j-1] && q->below->rows < i; q = q->below );
-
-        new->right = p->right;
-        p->right = new;
-        new->below = q->below;
-        q->below = new;
-
-        printf( "\nDo you want to insert another cell? (Y/N): " );
-        scanf(" %c", &c);
-        if (c == 'N' || c == 'n')
-            break;
+        matrix_setelem( head, i, j, value );
     }
     return head;
 }
