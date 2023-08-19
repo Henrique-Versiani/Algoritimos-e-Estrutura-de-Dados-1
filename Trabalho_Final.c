@@ -17,7 +17,7 @@ int main( void ) {
 
     Matrix *A = matrix_create();
     matrix_print(A);
-    
+
     return 0;
 }
 
@@ -40,6 +40,16 @@ void matrix_setelem( Matrix* m, int x, int y, float elem )
     p->right = new;
     new->below = q->below;
     q->below = new;
+
+    if ( ( p->right->right->rows == x && p->right->right->column == y ) )
+    {
+        Matrix *temp = p->right->right;
+        new->right = temp->right;
+        temp->right = NULL;
+        new->below = temp->below;
+        temp->below = NULL;
+        free( temp );
+    }
 }
 
 Matrix *matrix_create( void ) {
