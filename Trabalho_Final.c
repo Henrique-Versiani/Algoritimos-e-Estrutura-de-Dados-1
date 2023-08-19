@@ -11,22 +11,68 @@ typedef struct matrix {
 
 Matrix *matrix_create( void );//-------------------------------->Completo graças a Deus
 void matrix_print( Matrix *m );//------------------------------->Completo finalmente
-void matrix_setelem( Matrix *m, int x, int y, float elem );//--->Completo
 void matrix_destroy( Matrix *m );//----------------------------->Completo
+void matrix_setelem( Matrix *m, int x, int y, float elem );//--->Completo
 float matrix_getelem( Matrix *m, int x, int y );//-------------->Completo
-Matrix* matrix_add( Matrix *m, Matrix *n );//------------------->Faltando
-Matrix* matrix_multiply( Matrix *m, Matrix *n );//-------------->Faltando
-Matrix* matrix_transpose( Matrix *m );//------------------------>Faltando
+Matrix *matrix_add( Matrix *m, Matrix *n );//------------------->Completo
+Matrix *matrix_multiply( Matrix *m, Matrix *n );//-------------->Completo
+Matrix *matrix_transpose( Matrix *m );//------------------------>Faltando
+Matrix *heads_create( int x, int y );//------------------------->Fiz a mais para poupar tempo e linhas de código
 
-int main( void ) {
-    float teste;
-    printf( "%d", (sizeof(Matrix)));
+int main( void )
+{
     Matrix *A = matrix_create();
-    teste = matrix_getelem(A, 2, 1);
-    printf( "%.2f\n", teste );
-    //matrix_print(A);
-    matrix_destroy(A);
+    Matrix *B = matrix_create();
+    Matrix *C = matrix_multiply( A, B );
+    matrix_print( C );
+    matrix_destroy( A );
+    matrix_destroy( B );
+    matrix_destroy( C );
     return 0;
+}
+
+Matrix *heads_create( int x, int y )
+{
+    int i;
+    Matrix *head = ( Matrix * )malloc( sizeof( Matrix ) );//------>Cria a cabeça principal
+
+    head->row = -1;
+    head->column = -1;
+    head->right = NULL;
+    head->below = NULL;
+
+    Matrix *head_row[x], *head_col[y];
+
+    for ( i = 0; i < x; i++ )//----------------------------------->Cria a cabeça de cada uma das linhas baseado na entrada 'm'
+    {
+        head_row[i] = ( Matrix * )malloc( sizeof( Matrix ) );
+        head_row[i]->right = head_row[i];//----------------------->Faz a cabeça de cada linha apontar para si própria
+        head_row[i]->below = NULL;
+        head_row[i]->row = -1;
+    }
+
+    for ( i = 0; i < y; i++ )//----------------------------------->Cria a cabeça de cada uma das colunas baseado na entrada 'n'
+    {
+        head_col[i] = ( Matrix * )malloc( sizeof( Matrix ) );
+        head_col[i]->below = head_col[i];//----------------------->Faz a cabeça de cada coluna apontar para si própria
+        head_col[i]->right = NULL;
+        head_col[i]->column = -1;
+    }
+
+    head->right = head_col[0];//---------------------------------->Faz a cabeça principal apontar para a cabeça que repesenta a primeira coluna
+    head->below = head_row[0];//---------------------------------->Faz a cabeça principal apontar para a cabeça que repesenta a primeira linha
+
+    for ( i = 0; i < x - 1; i++ )//------------------------------->Faz a cabeça de cada linha apontar para a cabeça da linha de baixo
+        head_row[i]->below = head_row[i+1];
+
+    head_row[i]->below = head;//---------------------------------->Faz a última linha apontar para a cabeça
+
+    for ( i = 0; i < y - 1; i++ )//------------------------------->Faz a cabeça de cada coluna apontar para a cabeça da coluna do lado
+        head_col[i]->right = head_col[i+1];
+
+    head_col[i]->right = head;//---------------------------------->Faz a última coluna apontar para a cabeça
+
+    return head;
 }
 
 void matrix_setelem( Matrix* m, int x, int y, float elem )
@@ -69,45 +115,10 @@ Matrix *matrix_create( void ) {
     scanf( "%d %d", &m, &n );
     getchar();
 
-    Matrix *head = ( Matrix * )malloc( sizeof( Matrix ) );//------>Cria a cabeça principal
+    Matrix *head = heads_create( m, n );//----->Cria as cabeças da matriz
 
-    head->row = -1;
-    head->column = -1;
-    head->right = NULL;
-    head->below = NULL;
-
-    Matrix *head_row[m], *head_col[n];
-
-    for ( i = 0; i < m; i++ )//----------------------------------->Cria a cabeça de cada uma das linhas baseado na entrada 'm'
+    for ( ;; )
     {
-        head_row[i] = ( Matrix * )malloc( sizeof( Matrix ) );
-        head_row[i]->right = head_row[i];//----------------------->Faz a cabeça de cada linha apontar para si própria
-        head_row[i]->below = NULL;
-        head_row[i]->row = -1;
-    }
-
-    for ( i = 0; i < n; i++ )//----------------------------------->Cria a cabeça de cada uma das colunas baseado na entrada 'n'
-    {
-        head_col[i] = ( Matrix * )malloc( sizeof( Matrix ) );
-        head_col[i]->below = head_col[i];//----------------------->Faz a cabeça de cada coluna apontar para si própria
-        head_col[i]->right = NULL;
-        head_col[i]->column = -1;
-    }
-
-    head->right = head_col[0];//---------------------------------->Faz a cabeça principal apontar para a cabeça que repesenta a primeira coluna
-    head->below = head_row[0];//---------------------------------->Faz a cabeça principal apontar para a cabeça que repesenta a primeira linha
-
-    for ( i = 0; i < m - 1; i++ )//------------------------------->Faz a cabeça de cada linha apontar para a cabeça da linha de baixo
-        head_row[i]->below = head_row[i+1];
-
-    head_row[i]->below = head;//---------------------------------->Faz a última linha apontar para a cabeça
-
-    for ( i = 0; i < n - 1; i++ )//------------------------------->Faz a cabeça de cada coluna apontar para a cabeça da coluna do lado
-        head_col[i]->right = head_col[i+1];
-
-    head_col[i]->right = head;//---------------------------------->Faz a última coluna apontar para a cabeça
-
-    for ( ;; ) {
         flag = 0;
         do
         {
@@ -236,4 +247,138 @@ float matrix_getelem( Matrix *m, int x, int y )
     }
 
     return matrix[x - 1][y - 1];//-------------------------------------------------------------------->Retorna o valor da célula na posição desejada
+}
+
+int compare_to( int x, int y )
+{
+    if ( x > y )
+        return x;
+    else
+        return y;
+}
+
+Matrix *matrix_add( Matrix *m, Matrix *n )
+{
+    Matrix *currentRow = NULL;
+    int nRowsM = 1, nColsM = 1, nRowsN = 1, nColsN = 1;
+
+    for ( currentRow = m->below; currentRow->below != m; currentRow = currentRow->below, nRowsM++ );//->Conta a quantidade de linhas da matriz m
+    for ( currentRow = m->right; currentRow->right != m; currentRow = currentRow->right, nColsM++ );//->Conta a quantidade de colunas da matriz m
+
+    for ( currentRow = n->below; currentRow->below != n; currentRow = currentRow->below, nRowsN++ );//->Conta a quantidade de linhas da matriz n
+    for ( currentRow = n->right; currentRow->right != n; currentRow = currentRow->right, nColsN++ );//->Conta a quantidade de colunas da matriz n
+
+
+    int curRow, curCol, Rows = compare_to( nRowsM, nRowsN ), Cols = compare_to( nColsM, nColsN );
+    float matrix[Rows][Cols];//---------->Cria uma matriz usando o maior número de linhas e colunas entre as matrizes 'm' e 'n'
+
+    for ( curRow = 0; curRow <= Rows; curRow++ )//--------->Inicializa todos o elementos da matriz em '0'
+        for ( curCol = 0; curCol <= Cols; curCol++ )
+            matrix[curRow][curCol] = 0;
+
+    currentRow = m->below;//---------------->CurrentRow recebe a cabeça da primeira linha da matriz m
+
+    while ( currentRow != m )//------------->Repete enquanto o currentRow não voltar para a cabeça principal
+    {
+        Matrix *currentCell = currentRow->right;//-------->CurrentCell recebe a primeira célula da linha
+        
+        while ( currentCell != currentRow )//------------->Repete enquanto o currentCell não voltar para a cabeça da linha
+        {
+            matrix[currentCell->row - 1][currentCell->column - 1] = currentCell->info;//->A matriz criada recebe o valor que está na mesma posição da matriz esparsa
+            currentCell = currentCell->right;//------------->Vai para a próxima célula na mesma linha
+        }
+
+        currentRow = currentRow->below;//------------->Terminada a linha, pula para a próxima
+    }
+
+    currentRow = n->below;//-------->CurrentRow recebe a cabeça da primeira linha da matriz n
+
+    while ( currentRow != n )//----->Faz a mesma coisa, agora na matriz n
+    {
+        Matrix *currentCell = currentRow->right;
+        
+        while ( currentCell != currentRow )
+        {
+            matrix[currentCell->row - 1][currentCell->column - 1] += currentCell->info;//--->Soma com o valor que estiver nessa posição da matriz
+            currentCell = currentCell->right;
+        }
+
+        currentRow = currentRow->below;
+    }
+
+    Matrix *head = heads_create( Rows, Cols );//------>Cria as cabeças da nova matriz
+
+    for ( curRow = 0; curRow < Rows; curRow++ )
+    {
+        for ( curCol = 0; curCol < Cols; curCol++ )
+        {
+            if ( matrix[curRow][curCol] != 0 )//---------->Se o valor da matriz atual for diferente de '0' ele será inserido da matriz de retorno
+                matrix_setelem( head, ( curRow + 1), ( curCol + 1 ), matrix[curRow][curCol] );
+        }
+        printf( "\n" );//----------------------------------------------------------------------------->Pula um linha depois de percorrer o curCol
+    }
+    return head;
+}
+
+Matrix *matrix_multiply( Matrix *m, Matrix *n )
+{
+    Matrix *currentRow = NULL;
+    int nRowsM = 1, nColsM = 1, nRowsN = 1, nColsN = 1;
+
+    for ( currentRow = m->below; currentRow->below != m; currentRow = currentRow->below, nRowsM++ );//->Conta a quantidade de linhas da matriz m
+    for ( currentRow = m->right; currentRow->right != m; currentRow = currentRow->right, nColsM++ );//->Conta a quantidade de colunas da matriz m
+
+    for ( currentRow = n->below; currentRow->below != n; currentRow = currentRow->below, nRowsN++ );//->Conta a quantidade de linhas da matriz n
+    for ( currentRow = n->right; currentRow->right != n; currentRow = currentRow->right, nColsN++ );//->Conta a quantidade de colunas da matriz n
+
+
+    int curRow, curCol, Rows = compare_to( nRowsM, nRowsN ), Cols = compare_to( nColsM, nColsN );
+    float matrix[Rows][Cols];//---------->Cria uma matriz usando o maior número de linhas e colunas entre as matrizes 'm' e 'n'
+
+    for ( curRow = 0; curRow <= Rows; curRow++ )//--------->Inicializa todos o elementos da matriz em '0'
+        for ( curCol = 0; curCol <= Cols; curCol++ )
+            matrix[curRow][curCol] = 0;
+
+    currentRow = m->below;//---------------->CurrentRow recebe a cabeça da primeira linha da matriz m
+
+    while ( currentRow != m )//------------->Repete enquanto o currentRow não voltar para a cabeça principal
+    {
+        Matrix *currentCell = currentRow->right;//-------->CurrentCell recebe a primeira célula da linha
+        
+        while ( currentCell != currentRow )//------------->Repete enquanto o currentCell não voltar para a cabeça da linha
+        {
+            matrix[currentCell->row - 1][currentCell->column - 1] = currentCell->info;//->A matriz criada recebe o valor que está na mesma posição da matriz esparsa
+            currentCell = currentCell->right;//------------->Vai para a próxima célula na mesma linha
+        }
+
+        currentRow = currentRow->below;//------------->Terminada a linha, pula para a próxima
+    }
+
+    currentRow = n->below;//-------->CurrentRow recebe a cabeça da primeira linha da matriz n
+
+    while ( currentRow != n )//----->Faz a mesma coisa, agora na matriz n
+    {
+        Matrix *currentCell = currentRow->right;
+        
+        while ( currentCell != currentRow )
+        {
+            matrix[currentCell->row - 1][currentCell->column - 1] = ( matrix[currentCell->row - 1][currentCell->column - 1] ) * currentCell->info;//--->Multiplica com o valor que estiver nessa posição da matriz
+            currentCell = currentCell->right;
+        }
+
+        currentRow = currentRow->below;
+    }
+
+    Matrix *head = heads_create( Rows, Cols );//------>Cria as cabeças da nova matriz
+
+    for ( curRow = 0; curRow < Rows; curRow++ )
+    {
+        for ( curCol = 0; curCol < Cols; curCol++ )
+        {
+            if ( matrix[curRow][curCol] != 0 )//---------->Se o valor da matriz atual for diferente de '0' ele será inserido da matriz de retorno
+                matrix_setelem( head, ( curRow + 1), ( curCol + 1 ), matrix[curRow][curCol] );
+        }
+        printf( "\n" );//----------------------------------------------------------------------------->Pula um linha depois de percorrer o curCol
+    }
+    return head;
 }
