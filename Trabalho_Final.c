@@ -10,7 +10,7 @@ typedef struct matrix {
 }Matrix;
 
 Matrix *matrix_create( void );//-------------------------------->Completo graças a Deus
-void matrix_print( Matrix *m );//------------------------------->Incompleto
+void matrix_print( Matrix *m );//------------------------------->Completo finalmente
 void matrix_setelem( Matrix *m, int x, int y, float elem );//--->Completo
 void matrix_destroy( Matrix *m );//----------------------------->Completo
 
@@ -125,35 +125,41 @@ void matrix_print( Matrix *m ) {
     Matrix *currentRow = NULL;
     int nRows = 1, nCols = 1;
 
-    for ( currentRow = m->below; currentRow->below != m; currentRow = currentRow->below, nRows++ );
-    for ( currentRow = m->right; currentRow->right != m; currentRow = currentRow->right, nCols++ );
+    for ( currentRow = m->below; currentRow->below != m; currentRow = currentRow->below, nRows++ );//->Conta a quantidade de linhas
+    for ( currentRow = m->right; currentRow->right != m; currentRow = currentRow->right, nCols++ );//->Conta a quantidade de colunas
 
     int curRow, curCol;
-    
-    for ( curRow = 1; curRow <= nRows; curRow++ )
-    {
-        for ( curCol = 1; curCol <= nCols; curCol++ )
-            printf ( "(%d, %d): 0.00   ", curRow, curCol );
-        printf( "\n" );
-    }
-    printf( "\n\n" );
-    currentRow = m->below;
+    float matrix[nRows][nCols];//--------------------------------------------------------------------->Cria uma matriz de nRows x nCols
 
-    while ( currentRow != m )
+    for ( curRow = 0; curRow <= nRows; curRow++ )//--------------------------------------------------->Inicializa todos o elementos da matriz em '0'
+        for ( curCol = 0; curCol <= nCols; curCol++ )
+            matrix[curRow][curCol] = 0;
+
+    currentRow = m->below;//-------------------------------------------------------------------------->CurrentRow recebe a cabeça da primeira linha
+
+    while ( currentRow != m )//----------------------------------------------------------------------->Reepete enquanto o currentRow não voltar para a cabeça principal
     {
-        Matrix *currentCell = currentRow->right;
+        Matrix *currentCell = currentRow->right;//---------------------------------------------------->CurrentCell recebe a primeira célula da linha
         
-        // for ( curRow = 1; currentCell->row < curRow; curRow++ )
-        //     printf( "(%d, %d): 0.00   ", currentCell->row, currentCell->column );
-        
-        while ( currentCell != currentRow )
+        while ( currentCell != currentRow )//--------------------------------------------------------->Repete enquanto o currentCell não voltar para a cabeça da linha
         {
-            printf( "(%d, %d): %.2f   ", currentCell->row, currentCell->column, currentCell->info );
-            currentCell = currentCell->right;
+            matrix[currentCell->row - 1][currentCell->column - 1] = currentCell->info;//-------------->A matriz criada recebe o valor que está na mesma posição da matriz esparsa
+            currentCell = currentCell->right;//------------------------------------------------------->Vai para a próxima célula na mesma linha
         }
-        
-        printf( "\n" );
-        currentRow = currentRow->below;
+
+        currentRow = currentRow->below;//------------------------------------------------------------->Terminada a linha, pula para a próxima
+    }
+
+    for ( curRow = 0; curRow < nRows; curRow++ )//---------------------------------------------------->Printa a matriz esparsa com os '0's nas posições vazias
+    {
+        for ( curCol = 0; curCol < nCols; curCol++ )
+        {
+            if ( matrix[curRow][curCol] < 10 )//------------------------------------------------------>if desnecessário, foi apenas por estética
+                printf( "(%d, %d): %.2f   ", ( curRow + 1 ), ( curCol + 1 ), matrix[curRow][curCol] );
+            else
+                printf( "(%d, %d): %.2f  ", ( curRow + 1 ), ( curCol + 1 ), matrix[curRow][curCol] );
+        }
+        printf( "\n" );//----------------------------------------------------------------------------->Pula um linha depois de percorrer o curCol
     }
 }
 
