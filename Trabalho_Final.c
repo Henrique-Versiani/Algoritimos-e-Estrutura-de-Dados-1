@@ -10,7 +10,7 @@ typedef struct matrix {
 }Matrix;
 
 Matrix *matrix_create( void );//-------------------------------->Completo graças a Deus
-void matrix_print( Matrix *m );//------------------------------->Completo finalmente
+void matrix_print( Matrix *m );//------------------------------->Completo finalmente - agora alocada dinamicamente
 void matrix_destroy( Matrix *m );//----------------------------->Completo
 void matrix_setelem( Matrix *m, int x, int y, float elem );//--->Completo
 float matrix_getelem( Matrix *m, int x, int y );//-------------->Completo
