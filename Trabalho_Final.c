@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct matrix {
 	struct matrix *right;
@@ -19,6 +20,7 @@ Matrix *matrix_multiply( Matrix *m, Matrix *n );//-------------->Corrigido e Com
 Matrix *matrix_transpose( Matrix *m );//------------------------>Faltando
 Matrix *heads_create( int x, int y );//------------------------->Fiz a mais para poupar tempo e linhas de código
 int compare_to( int x, int y );
+Matrix *matrix_create_random( unsigned int m );//--------------->Completo
 
 int main( void )
 {
@@ -38,7 +40,6 @@ int main( void )
     matrix_destroy( A );
     matrix_destroy( B );
     return 0;
-
 }
 
 Matrix *heads_create( int x, int y )
@@ -85,7 +86,7 @@ Matrix *heads_create( int x, int y )
     return head;
 }
 
-void matrix_setelem( Matrix* m, int x, int y, float elem )
+void matrix_setelem( Matrix *m, int x, int y, float elem )
 {
     int nRows = 1, nCols = 1;
     Matrix *new = ( Matrix * )malloc( sizeof( Matrix ) );
@@ -118,33 +119,31 @@ void matrix_setelem( Matrix* m, int x, int y, float elem )
 }
 
 Matrix *matrix_create( void ) {
-    int i, j, m, n, flag;
+    int i, j, m, n;
     float value;
 
     printf( "\nEnter the number of rows and columns: " );
     scanf( "%d %d", &m, &n );
     getchar();
 
-    Matrix *head = heads_create( m, n );//--->Cria as cabeças da matriz
+    Matrix *head = heads_create( m, n );//----->Cria as cabeças da matriz
 
-    for ( ;; )
-    {
-        flag = 0;
-        do
-        {
-            if ( flag == 1 )//------------------------------------>Ao final do 'do while' o valor da flag é setado em '1', logo caso
-                printf( "\nInvalid value, insert again!!" );//---- o 'do while' ocorra uma seguda vez, cairá nesse 'if' 
+    while (1)
+    {      
+        printf( "\nEnter row, column, value (or 0 to exit): " );
+        scanf( "%d", &i );
 
-            printf( "\nEnter row, column, value: " );
-            scanf( "%d %d %f", &i, &j, &value );
-            flag = 1;
-            getchar();
-        } while ( i > m || j > n || i < 1 || j < 1 );
-
-        if ( value == 0 )//--->A condição para sair do for é setar a variável 'value' em '0'
+        if ( i == 0 )//------------------------------->Primeiro ele confere se o i não é 0, se for 0 quebra, se nao continua
             break;
 
-        matrix_setelem( head, i, j, value );//--->Cria uma nova célula a partir da função 'matrix_setelem'
+        scanf( "%d %f", &j, &value );//----------------------->Pra inserir os proximos valores
+            
+        if ( i > m || j > n || i < 1 || j < 1 )//--------------->Se for maior que o numero de colunas/linhas ou se for menor que 1 ele solicita de novo
+        {
+            printf( "\nInvalid value, insert again!!" );
+            continue;
+        }
+        matrix_setelem( head, i, j, value );//-------------------->Cria uma nova célula a partir da função 'matrix_setelem'
     }
     return head;
 }
@@ -420,15 +419,35 @@ Matrix *matrix_transpose( Matrix *m )
 
     currentRow = m->below; //------------------------------------------------------------------------->Recebe a cabeça da primeira linha
 
-    while ( currentRow != m ){  //-------------------------------------------------------------------->Percorre até voltar pra cabeça                                                                                                       
-        Matrix *currentCell = currentRow->right;  //-------------------------------------------------->Recebe a primeira celula da linha
+    while ( currentRow != m )//-------------------------------------------------------------------->Percorre até voltar pra cabeça 
+    {                                                                                                      
+        Matrix *currentCell = currentRow->right;//-------------------------------------------------->Recebe a primeira celula da linha
             
-            while ( currentCell != currentRow ){   //-------------------------------------------------->Percorre até voltar pra cabeça da linha
+            while ( currentCell != currentRow )//-------------------------------------------------->Percorre até voltar pra cabeça da linha
+            {
                 matrix_setelem( head, currentCell->column, currentCell->row, currentCell->info ); //--->Insere o valor na transposta, com as posicoes inversas por ser transposta
-                currentCell = currentCell->right;   //------------------------------------------------->Passa pra proxima linha
+                currentCell = currentCell->right;//------------------------------------------------->Passa pra proxima linha
             }
-        currentRow = currentRow->below;   //----------------------------------------------------------->Depois de passar por todas as colunas da linha, passa pra proxima linha
+        currentRow = currentRow->below;//----------------------------------------------------------->Depois de passar por todas as colunas da linha, passa pra proxima linha
     }
 
+    return head;
+}
+
+Matrix *matrix_create_random( unsigned int m )
+{
+    int i, j, value, total = m*m, filled = 0;
+    Matrix *head = heads_create( m, m );//----->Cria as cabeças da matriz
+    srand( time ( 0 ) );
+
+    while ( filled < total )
+    {    
+        i = rand() % m;
+        j = rand() % m;
+        value = rand() % 200;
+
+        matrix_setelem( head, i+1, j+1, value );//-------------------->Cria uma nova célula a partir da função 'matrix_setelem'
+        filled++;
+    }
     return head;
 }
