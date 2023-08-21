@@ -118,7 +118,8 @@ void matrix_setelem( Matrix *m, int x, int y, float elem )
     }
 }
 
-Matrix *matrix_create( void ) {
+Matrix *matrix_create( void )
+{
     int i, j, m, n;
     float value;
 
@@ -148,7 +149,8 @@ Matrix *matrix_create( void ) {
     return head;
 }
 
-void matrix_print( Matrix *m ) {
+void matrix_print( Matrix *m )
+{
     Matrix *currentRow = NULL;
     int nRows = 1, nCols = 1;
 
@@ -203,7 +205,8 @@ void matrix_print( Matrix *m ) {
     free(matrix);
 }
 
-void matrix_destroy( Matrix *m ) {
+void matrix_destroy( Matrix *m )
+{
     Matrix *currentRow = m->below;//--->Inicializa o currentRow com a primeira linha da matriz
 
     while ( currentRow != m )//-------->Repete enquanto currentRow não retornar para a cabeça principal
@@ -273,10 +276,7 @@ float matrix_getelem( Matrix *m, int x, int y )
 
 int compare_to( int x, int y )
 {
-    if ( x > y )
-        return x;
-    else
-        return y;
+    return x > y ? x : y;
 }
 
 Matrix *matrix_add( Matrix *m, Matrix *n )
@@ -291,26 +291,31 @@ Matrix *matrix_add( Matrix *m, Matrix *n )
     for ( currentRow = n->right; currentRow->right != n; currentRow = currentRow->right, nColsN++ );//->Conta a quantidade de colunas da matriz n
 
 
-    int curRow, curCol, Rows = compare_to( nRowsM, nRowsN ), Cols = compare_to( nColsM, nColsN );
-    float matrix[Rows][Cols];//---->Cria uma matriz usando o maior número de linhas e colunas entre as matrizes 'm' e 'n'
+    int curRow, curCol, Rows = compare_to( nRowsM, nRowsN ), Cols = compare_to( nColsM, nColsN );;
 
-    for ( curRow = 0; curRow <= Rows; curRow++ )//--->Inicializa todos o elementos da matriz em '0'
-        for ( curCol = 0; curCol <= Cols; curCol++ )
+    float **matrix = ( float ** )malloc( Rows * sizeof( float * ) );//--->Cria uma matriz de nRows x nCols dinamicamente
+    for ( curRow = 0; curRow < Rows; curRow++ )
+    {
+        matrix[curRow] = ( float * )malloc( Cols * sizeof( float ) );
+    }
+
+    for ( curRow = 0; curRow < Rows; curRow++ )//--->Inicializa todos o elementos da matriz em '0'
+        for ( curCol = 0; curCol < Cols; curCol++ )
             matrix[curRow][curCol] = 0;
 
-    currentRow = m->below;//------->CurrentRow recebe a cabeça da primeira linha da matriz m
-
-    while ( currentRow != m )//---->Repete enquanto o currentRow não voltar para a cabeça principal
+    currentRow = m->below;//------>CurrentRow recebe a cabeça da primeira linha
+    
+    while ( currentRow != m )//------------->Repete enquanto o currentRow não voltar para a cabeça principal
     {
-        Matrix *currentCell = currentRow->right;//--->CurrentCell recebe a primeira célula da linha
+        Matrix *currentCell = currentRow->right;//-------->CurrentCell recebe a primeira célula da linha
         
-        while ( currentCell != currentRow )//---->Repete enquanto o currentCell não voltar para a cabeça da linha
+        while ( currentCell != currentRow )//------------->Repete enquanto o currentCell não voltar para a cabeça da linha
         {
             matrix[currentCell->row - 1][currentCell->column - 1] = currentCell->info;//->A matriz criada recebe o valor que está na mesma posição da matriz esparsa
-            currentCell = currentCell->right;//-->Vai para a próxima célula na mesma linha
+            currentCell = currentCell->right;//------------->Vai para a próxima célula na mesma linha
         }
 
-        currentRow = currentRow->below;//-------->Terminada a linha, pula para a próxima
+        currentRow = currentRow->below;//------------->Terminada a linha, pula para a próxima
     }
 
     currentRow = n->below;//-------->CurrentRow recebe a cabeça da primeira linha da matriz n
@@ -328,16 +333,21 @@ Matrix *matrix_add( Matrix *m, Matrix *n )
         currentRow = currentRow->below;
     }
 
-    Matrix *head = heads_create( Rows, Cols );//---->Cria as cabeças da nova matriz
+    Matrix *head = heads_create( Rows, Cols );//------>Cria as cabeças da nova matriz
 
     for ( curRow = 0; curRow < Rows; curRow++ )
     {
         for ( curCol = 0; curCol < Cols; curCol++ )
         {
-            if ( matrix[curRow][curCol] != 0 )//---->Se o valor da matriz atual for diferente de '0' ele será inserido da matriz de retorno
+            if ( matrix[curRow][curCol] != 0 )//---------->Se o valor da matriz atual for diferente de '0' ele será inserido da matriz de retorno
                 matrix_setelem( head, ( curRow + 1), ( curCol + 1 ), matrix[curRow][curCol] );
         }
     }
+
+    for (curRow = 0; curRow < Rows; curRow++)//-->Libera a memória alocada para a matriz
+        free(matrix[curRow]);
+    free(matrix);
+
     return head;
 }
 
@@ -353,30 +363,36 @@ Matrix *matrix_multiply( Matrix *m, Matrix *n )
     for ( currentRow = n->right; currentRow->right != n; currentRow = currentRow->right, nColsN++ );//->Conta a quantidade de colunas da matriz n
 
 
-    int curRow, curCol, Rows = compare_to( nRowsM, nRowsN ), Cols = compare_to( nColsM, nColsN );
-    float matrixM[Rows][Cols];//---------->Cria uma matriz usando o maior número de linhas e colunas entre as matrizes 'm' e 'n' para receber os valores da matriz 'm'
-    float matrixN[Rows][Cols];//---------->Cria uma matriz usando o maior número de linhas e colunas entre as matrizes 'm' e 'n' para receber os valores da matriz 'n' 
+    int curRow, curCol, Rows = compare_to( nRowsM, nRowsN ), Cols = compare_to( nColsM, nColsN );;
 
-    for ( curRow = 0; curRow <= Rows; curRow++ )//--------->Inicializa todos o elementos da matriz em '0'
-        for ( curCol = 0; curCol <= Cols; curCol++ )
-        {
+    float **matrixM = ( float ** )malloc( Rows * sizeof( float * ) );//--->Cria uma matriz M de nRows x nCols dinamicamente
+    float **matrixN = ( float ** )malloc( Rows * sizeof( float * ) );//--->Cria uma matriz N de nRows x nCols dinamicamente
+    
+    for ( curRow = 0; curRow < Rows; curRow++ )
+    {
+        matrixM[curRow] = ( float * )malloc( Cols * sizeof( float ) );
+        matrixN[curRow] = ( float * )malloc( Cols * sizeof( float ) );
+    }
+
+    for ( curRow = 0; curRow < Rows; curRow++ )//--->Inicializa todos o elementos das matrizes em '0'
+        for ( curCol = 0; curCol < Cols; curCol++ ){
             matrixM[curRow][curCol] = 0;
             matrixN[curRow][curCol] = 0;
         }
 
-    currentRow = m->below;//---------------->CurrentRow recebe a cabeça da primeira linha da matriz m
+    currentRow = m->below;//------>CurrentRow recebe a cabeça da primeira linha
 
     while ( currentRow != m )//------------->Repete enquanto o currentRow não voltar para a cabeça principal
     {
-        Matrix *currentCell = currentRow->right;//--->CurrentCell recebe a primeira célula da linha
+        Matrix *currentCell = currentRow->right;//-------->CurrentCell recebe a primeira célula da linha
         
-        while ( currentCell != currentRow )//-------->Repete enquanto o currentCell não voltar para a cabeça da linha
+        while ( currentCell != currentRow )//------------->Repete enquanto o currentCell não voltar para a cabeça da linha
         {
             matrixM[currentCell->row - 1][currentCell->column - 1] = currentCell->info;//->A matriz criada recebe o valor que está na mesma posição da matriz esparsa
-            currentCell = currentCell->right;//------>Vai para a próxima célula na mesma linha
+            currentCell = currentCell->right;//------------->Vai para a próxima célula na mesma linha
         }
 
-        currentRow = currentRow->below;//------------>Terminada a linha, pula para a próxima
+        currentRow = currentRow->below;//------------->Terminada a linha, pula para a próxima
     }
 
     currentRow = n->below;//-------->CurrentRow recebe a cabeça da primeira linha da matriz n
@@ -387,7 +403,7 @@ Matrix *matrix_multiply( Matrix *m, Matrix *n )
         
         while ( currentCell != currentRow )
         {
-            matrixN[currentCell->row - 1][currentCell->column - 1] = ( matrixM[currentCell->row - 1][currentCell->column - 1] ) * currentCell->info;//->Multiplica pelo valor que estiver nessa posição da matriz 'm'
+            matrixN[currentCell->row - 1][currentCell->column - 1] = ( matrixM[currentCell->row - 1][currentCell->column - 1] ) * currentCell->info;//--->Multiplica pelo valor que estiver nessa posição da matriz 'm'
             currentCell = currentCell->right;
         }
 
@@ -400,10 +416,20 @@ Matrix *matrix_multiply( Matrix *m, Matrix *n )
     {
         for ( curCol = 0; curCol < Cols; curCol++ )
         {
-            if ( matrixN[curRow][curCol] != 0 )//---->Se o valor da matriz atual for diferente de '0' ele será inserido da matriz de retorno
+            if ( matrixN[curRow][curCol] != 0 )//---------->Se o valor da matriz atual for diferente de '0' ele será inserido da matriz de retorno
                 matrix_setelem( head, ( curRow + 1), ( curCol + 1 ), matrixN[curRow][curCol] );
         }
     }
+
+    for (curRow = 0; curRow < Rows; curRow++)//-->Libera a memória alocada para a matriz M
+        free(matrixM[curRow]);
+    free(matrixM);
+
+    for (curRow = 0; curRow < Rows; curRow++)//-->Libera a memória alocada para a matriz N
+        free(matrixN[curRow]);
+    free(matrixN);
+
+
     return head;
 }
 
