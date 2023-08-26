@@ -17,7 +17,7 @@ void matrix_setelem( Matrix *m, int x, int y, float elem );//--->Completo
 float matrix_getelem( Matrix *m, int x, int y );//-------------->Completo
 Matrix *matrix_add( Matrix *m, Matrix *n );//------------------->Completo
 Matrix *matrix_multiply( Matrix *m, Matrix *n );//-------------->Corrigido e Completo
-Matrix *matrix_transpose( Matrix *m );//------------------------>Faltando
+Matrix *matrix_transpose( Matrix *m );//------------------------>Completo
 Matrix *heads_create( int x, int y );//------------------------->Fiz a mais para poupar tempo e linhas de código
 int compare_to( int x, int y );
 Matrix *matrix_create_random( unsigned int m );//--------------->Completo
