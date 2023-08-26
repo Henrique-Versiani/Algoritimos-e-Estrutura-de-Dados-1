@@ -250,28 +250,38 @@ float matrix_getelem( Matrix *m, int x, int y )
     for ( currentRow = m->right; currentRow->right != m; currentRow = currentRow->right, nCols++ );//->Conta a quantidade de colunas
 
     int curRow, curCol;
-    float matrix[nRows][nCols];//-------->Cria uma matriz de nRows x nCols
 
-    for ( curRow = 0; curRow <= nRows; curRow++ )//------>Inicializa todos o elementos da matriz em '0'
-        for ( curCol = 0; curCol <= nCols; curCol++ )
+    float **matrix = ( float ** )malloc( nRows * sizeof( float * ) );//--->Cria uma matriz de nRows x nCols dinamicamente
+    for ( curRow = 0; curRow < nRows; curRow++ )
+    {
+        matrix[curRow] = ( float * )malloc( nCols * sizeof( float ) );
+    }
+
+    for ( curRow = 0; curRow < nRows; curRow++ )//--->Inicializa todos o elementos da matriz em '0'
+        for ( curCol = 0; curCol < nCols; curCol++ )
             matrix[curRow][curCol] = 0;
 
-    currentRow = m->below;//-------->CurrentRow recebe a cabeça da primeira linha
+    currentRow = m->below;//------>CurrentRow recebe a cabeça da primeira linha
 
-    while ( currentRow != m )//----->Reepete enquanto o currentRow não voltar para a cabeça principal
+    while ( currentRow != m )//--->Reepete enquanto o currentRow não voltar para a cabeça principal
     {
-        Matrix *currentCell = currentRow->right;//---->CurrentCell recebe a primeira célula da linha
-        
-        while ( currentCell != currentRow )//--------->Repete enquanto o currentCell não voltar para a cabeça da linha
+        Matrix *currentCell = currentRow->right;//-->CurrentCell recebe a primeira célula da linha
+
+        while ( currentCell != currentRow )
         {
-            matrix[currentCell->row - 1][currentCell->column - 1] = currentCell->info;//->A matriz criada recebe o valor que está na mesma posição da matriz esparsa
-            currentCell = currentCell->right;//--->Vai para a próxima célula na mesma linha
+            matrix[currentCell->row - 1][currentCell->column - 1] = currentCell->info;//-->A matriz criada recebe o valor que está na mesma posição da matriz esparsa
+            currentCell = currentCell->right;//-->Vai para a próxima célula na mesma linha
         }
 
         currentRow = currentRow->below;//--->Terminada a linha, pula para a próxima
     }
+    float ans = matrix[x - 1][y - 1];//----->Recebe a resposta antes de dar free
 
-    return matrix[x - 1][y - 1];//--->Retorna o valor da célula na posição desejada
+    for (curRow = 0; curRow < nRows; curRow++)//-->Libera a memória alocada para a matriz
+        free(matrix[curRow]);
+    free(matrix);
+
+    return ans;//--->Retorna o valor da célula na posição desejada
 }
 
 int compare_to( int x, int y )
