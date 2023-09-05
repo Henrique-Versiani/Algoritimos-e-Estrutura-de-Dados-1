@@ -34,21 +34,20 @@ typedef enum {  //enumera cada um de 0 a 2
 } ReplacementPolicy;
 
 Cache* initializeCache(int num_sets, int block_size, int associativity);
+Cache *freeCache(Cache *cache);
 int getIndex(int address, int block_size, int num_sets);
 int getTag(int address, int block_size, int num_sets);
 void readCache(Cache *cache, int address, MissCounters *missCounters, ReplacementPolicy policy, int *totalAccesses);
-void freeCache (Cache *cache);
 void openFile(Cache *cache, const char *fileName, MissCounters *missCounters, ReplacementPolicy policy, int *totalAccesses);
-void missCounters(MissCounters *missCounters);
+int findReplacementIndex(Cache *cache, ReplacementPolicy policy, int index);
 int findFIFOIndex(Cache *cache, int index);
 int findLRUIndex(Cache *cache, int index);
-int findReplacementIndex(Cache *cache, ReplacementPolicy policy, int index);
-int getTotalSets(Cache *cache);
+int isCacheFull(Cache *cache);
 
 int main( int argc, char *argv[ ] )
 {
-    /*if (argc != 7){
-		printf("Numero de argumentos incorreto. Utilize:\n");
+    if (argc != 7){
+		printf("Incorrect number of arguments. The proper format is:\n");
 		printf("./cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada\n");
 		exit(EXIT_FAILURE);
 	}
@@ -59,32 +58,12 @@ int main( int argc, char *argv[ ] )
 	int flagOut = atoi(argv[5]);
 	char *arquivoEntrada = argv[6];
 
-
-
 	printf("nsets = %d\n", nsets);
 	printf("bsize = %d\n", bsize);
 	printf("assoc = %d\n", assoc);
 	printf("subst = %s\n", subst);
 	printf("flagOut = %d\n", flagOut);
-	printf("arquivo = %s\n", arquivoEntrada);*/ // Por enquanto vamos manter assim para testar melhor
-    int nsets, bsize, assoc, flagOut;
-    char subst[10], arquivoEntrada[100];
-    srand(time(NULL));
-
-    char command[50];
-    scanf("%s %d %d %d %s %d %s", command, &nsets, &bsize, &assoc, subst, &flagOut, arquivoEntrada);
-
-    if (strcmp(command, "/cache_simulator") != 0) {
-        printf("Comando invalido. Use o formato cache_simulator <nsets> <bsize> <assoc> <substituicao> <flag_saida> arquivo_de_entrada\n");
-        return 1;
-    }
-
-	printf("nsets = %d\n", nsets);
-	printf("bsize = %d\n", bsize);
-	printf("assoc = %d\n", assoc);
-	printf("subst = %s\n", subst);
-	printf("flagOut = %d\n", flagOut);
-	printf("arquivo = %s\n\n", arquivoEntrada);
+	printf("arquivo = %s\n", arquivoEntrada);
 
     ReplacementPolicy policy;
     if (strcmp(subst, "L") == 0) {
@@ -108,34 +87,29 @@ int main( int argc, char *argv[ ] )
 
     openFile(cache, arquivoEntrada, &missCounters, policy, &totalAccesses);  // Abrir o arquivo binário
 
-    freeCache(cache);
-
-// Calcula os hits e misses
 
     // Calcula as taxas de miss e hit
     float hitRate = (float)missCounters.hit / totalAccesses;
     float missRate = (float)missCounters.miss / totalAccesses;
 
-    float TotalMisses = (float)missCounters.capacidade + (float)missCounters.compulsorio + (float)missCounters.conflito;
+    float TotalMisses = missCounters.miss; 
     float compulsorioRate = (float)missCounters.compulsorio / TotalMisses;
     float conflitoRate = (float)missCounters.conflito / TotalMisses;
     float capacidadeRate = (float)missCounters.capacidade / TotalMisses;
 
 if (flagOut == 0) {
+    printf("Total de hit = %d\n", missCounters.hit);
+    printf("Total de miss = %d\n", missCounters.miss);
     printf("Taxa de hits = %.2f%%\n", hitRate * 100);
     printf("Taxa de miss = %.2f%%\n", missRate * 100);
     printf("Taxa de miss compulsorio = %.2f%%\n", compulsorioRate * 100);
     printf("Taxa de miss de capacidade = %.2f%%\n", capacidadeRate * 100);
     printf("Taxa de miss de conflito = %.2f%%\n", conflitoRate * 100);
+
 } else if (flagOut == 1) {
     printf("%d %.4f %.4f %.2f %.2f %.2f\n", totalAccesses, hitRate, missRate, compulsorioRate, capacidadeRate, conflitoRate);
 }
-
-    printf("\nMisses compulsorios: %d\n", missCounters.compulsorio);
-    printf("Misses de capacidade: %d\n", missCounters.capacidade);
-    printf("Misses de conflito: %d\n", missCounters.conflito);
-    printf("Misses: %d\n", missCounters.miss);
-    printf("Hits: %d\n", missCounters.hit);
+    cache = freeCache(cache);
     return 0;
 }
 
@@ -161,7 +135,18 @@ Cache* initializeCache(int num_sets, int block_size, int associativity){
     return cache;
 }
 
-// proxima funcao é pra achar o indice mapeado
+// pra liberar a cache
+Cache *freeCache(Cache *cache) {
+    for (int i = ((cache->numSets * cache->associativity) - 1); i >= 0; i--) {
+        free(&cache->lines[i]);
+    }
+    free(cache->lines);
+    // Libera a memória para a estrutura de cache
+    free(cache);
+    return NULL;
+}
+
+// pra achar o indice mapeado
 int getIndex(int address, int block_size, int num_sets){
 
     int index;
@@ -182,7 +167,7 @@ int getTag(int address, int block_size, int num_sets) {
 }
 
 
-
+// pra ler a cache 
 void readCache(Cache *cache, int address, MissCounters *missCounters, ReplacementPolicy policy, int *totalAccesses) {
     int index = getIndex(address, cache->blockSize, cache->numSets);
     int tag = getTag(address, cache->blockSize, cache->numSets);
@@ -201,23 +186,17 @@ void readCache(Cache *cache, int address, MissCounters *missCounters, Replacemen
         missCounters->hit++;
         
         // Atualiza o tempo de acesso da linha atingida para o valor mais recente
-        if (policy == LRU) {
+        if (policy == LRU)
             cache->lines[lineIndex + hitIndex].accessTime = (*totalAccesses);
-            
-            // // Atualiza o tempo de acesso das outras linhas do conjunto
-            // for (int i = lineIndex; i < lineIndex + cache->associativity; i++) {
-            //     if (i != (lineIndex + hitIndex)) {
-            //         cache->lines[i].accessTime++;
-            //     }
-            // }
-        }
-    } else {
+
+        
+     } else {
         // Miss
         missCounters->miss++;
 
-        // - Compulsório: O bloco nunca foi carregado na cache
-        // - Capacidade: A cache está cheia, mas o bloco não está nela
-        // - Conflito: O bloco não está na cache devido a uma colisão de conjunto
+        // Compulsório: O bloco nunca foi carregado na cache
+        // Capacidade: A cache está cheia
+        // Conflito: O bloco não está na cache devido a uma colisão de conjunto
 
         int emptyLineIndex = -1; // indice de uma linha vazia na cache
         int replaceIndex = -1;   // indice da linha para substituição
@@ -230,21 +209,17 @@ void readCache(Cache *cache, int address, MissCounters *missCounters, Replacemen
         }
 
         if (emptyLineIndex != -1) {
-            missCounters->compulsorio++; // cache miss compulsório: há uma linha vazia na cache
-
+            missCounters->compulsorio++; 
             replaceIndex = emptyLineIndex;
+
         } else {
-            // miss de capacidade ou conflito
-            replaceIndex = findReplacementIndex(cache, policy, index); // Encontre uma linha para substituir
+            replaceIndex = findReplacementIndex(cache, policy, index); // Encontra uma linha para substituir
+            int cacheCheia = isCacheFull(cache);
 
-            // se o bloco que será substituído é da mesma "conjunto" (mesmo índice) que o novo bloco
-            // se for o mesmo "conjunto", é um miss de conflito
-            // se não, é um miss de capacidade
-
-            if (getIndex(cache->lines[replaceIndex].lastAccessedAddress, cache->blockSize, cache->numSets) == index) {
-                missCounters->conflito++;
-            } else {
+            if (cacheCheia) {
                 missCounters->capacidade++;
+            } else {
+                missCounters->conflito++;
             }
         }
 
@@ -257,12 +232,6 @@ void readCache(Cache *cache, int address, MissCounters *missCounters, Replacemen
             // Atualiza o tempo de acesso da linha atual para o valor mais recente
             cache->lines[replaceIndex].accessTime = (*totalAccesses);
 
-            // Atualiza o tempo de acesso das outras linhas do conjunto
-            for (int i = lineIndex; i < lineIndex + cache->associativity; i++) {
-                if (i != replaceIndex) {
-                    cache->lines[i].accessTime++;
-                }
-            }
         } else if (policy == FIFO) {
             // Atualiza o tempo de inserção da linha atual para o valor mais recente
             cache->lines[replaceIndex].insertionTime = (*totalAccesses);
@@ -272,7 +241,7 @@ void readCache(Cache *cache, int address, MissCounters *missCounters, Replacemen
 }
 
 
-
+// vai escolher qual politica usar dependendo da entrada
 int findReplacementIndex(Cache *cache, ReplacementPolicy policy, int index) {
     int lineIndex = index * cache->associativity;
     int replaceIndex;
@@ -288,11 +257,6 @@ int findReplacementIndex(Cache *cache, ReplacementPolicy policy, int index) {
     return replaceIndex;
 }
 
-// pra liberar a cache
-void freeCache (Cache *cache){
-    free(cache->lines); //libera o espaço alocado pras linhas
-    free(cache);        //libera o espaço alocao pra cache
-}
 
 // pra abrir o binario
 void openFile(Cache *cache, const char *fileName, MissCounters *missCounters, ReplacementPolicy policy, int *totalAccesses) {
@@ -313,45 +277,48 @@ void openFile(Cache *cache, const char *fileName, MissCounters *missCounters, Re
     fclose(inputFile);  // fecha o arquivo após a leitura
 }
 
-// so pra inicializar os misses
-void missCounters(MissCounters *missCounters) {
-    missCounters->compulsorio = 0;
-    missCounters->capacidade = 0;
-    missCounters->conflito = 0;
-    missCounters->hit = 0;
-    missCounters->miss = 0;
-}
-
 // pra achar qual linha substituir no LRU
 int findLRUIndex(Cache *cache, int index) {
     int oldestIndex = index * cache->associativity; //inicializa a variavel com o indice da primeira linha no conjunto
     int oldestAccessTime = cache->lines[oldestIndex].accessTime; //inicializa a variavel com o tempo de acesso da primeira linha no conjunto
 
     for (int i = index * cache->associativity + 1; i < (index + 1) * cache->associativity; i++) {   //percorre a partir da segunda linha do conjunto
-        if (cache->lines[i].accessTime < oldestAccessTime) {    // se o tempo de acesso da linha atual eh menor do que o do mais antigo 
+        if (cache->lines[i].accessTime < oldestAccessTime) {    // verifica se o tempo de acesso da linha atual eh menor do que o do mais antigo 
             oldestIndex = i;    //se sim, atualiza o indice pra linha atual
             oldestAccessTime = cache->lines[i].accessTime;  // atualiza oldestAccessTime com o tempo de acesso da linha atual
         }
     }
 
-    return oldestIndex - index * cache->associativity;  //retorna o indice da linha mais antiga no conjunto
+    return oldestIndex;
 }
 
+// pra achar qual linha substituir no FIFO
 int findFIFOIndex(Cache *cache, int index) {
     int oldestIndex = index * cache->associativity; //inicializa a variavel com o indice da primeira linha no conjunto
     int oldestInsertionTime = cache->lines[oldestIndex].insertionTime; //inicializa a variavel com o tempo de inserção da primeira linha no conjunto
 
     for (int i = index * cache->associativity + 1; i < (index + 1) * cache->associativity; i++) { //percorre a partir da segunda linha do conjunto
-        if (cache->lines[i].insertionTime < oldestInsertionTime) {   // se o tempo de inserção da linha atual eh menor do que o do mais antigo 
+        if (cache->lines[i].insertionTime < oldestInsertionTime) {   // verifica se o tempo de inserção da linha atual eh menor do que o do mais antigo 
             oldestIndex = i; //se sim, atualiza o indice pra linha atual
             oldestInsertionTime = cache->lines[i].insertionTime; // atualiza a variavel com o tempo de inserção da linha atual
         }
     }
 
-    return oldestIndex - index * cache->associativity; //retorna o indice da linha mais antiga no conjunto
+    return oldestIndex;
 }
 
-
-int getTotalSets(Cache *cache) {
-    return cache->numSets;
+// verifica se a cache ta cheia pra determianr qual miss eh capacidade ou conflito
+int isCacheFull(Cache *cache) {
+    for (int i = 0; i < cache->numSets; i++) {  //percorre os conjuntos
+        int occupiedLines = 0;
+        for (int j = 0; j < cache->associativity; j++) {    //percorre as linhas
+            if (cache->lines[i * cache->associativity + j].valid) { //ve se ta como valida (tem coisa)
+                occupiedLines++;    //se sim, dai incrementa
+            }
+        }
+        if (occupiedLines < cache->associativity) { //aqui ele verifica se a quantidade de linhas ocupadas é menor que a quntd total de linhas
+            return 0; // se sim, cache não ta cheia
+        }
+    }
+    return 1; // se não, cache ta cheia
 }
