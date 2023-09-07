@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
 int menu( void );
 void Insertion_sort( int array[], int n );
@@ -9,6 +10,8 @@ void Merge_sort( int array[], int left, int right );
 void Merge( int array[], int left, int middle, int right );
 void Quick_sort( int array[], int left, int right );
 void free_array( int array[], int n );
+bool Order_verification( int array[], int n );
+
 int main( void )
 {
     clock_t start, end;
@@ -63,7 +66,12 @@ int main( void )
         cpu_time_used = ( ( double ) ( end - start ) ) / CLOCKS_PER_SEC;
         printf( "Execution time: %f seconds\n", cpu_time_used );
 
-        for( i = 0; i < n; i++ )
+        if( Order_verification( array, n ) )
+            printf( "The order is correct\n" );
+        else
+            printf( "The order is incorrect\n" );
+
+        for( i = 0; i < n; i++ )// Restaura o ordem do array antes do uso do sort
             array[i] = temp[i];
     }
 
@@ -216,8 +224,11 @@ void Quick_sort( int array[], int left, int right )
         Quick_sort( array, i, right );
 }
 
-// void free_array( int *array, int n )
-// {
-//     for( int i = 0; i < n; i++ )
-//         free( &array[i] );
-// }
+bool Order_verification( int array[], int n )
+{
+    for( int i = 0; i < n - 1; i++ )
+        if( array[i] > array[i + 1] )
+            return false;
+    
+    return true;
+}
