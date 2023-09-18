@@ -1,6 +1,6 @@
 Henrique Colares Versiani - M2 AED1
 
-Convenção usada: https://fabiensanglard.net/fd_proxy/doom3/CodeStyleConventions.pdf Link para o LeetCode: https://leetcode.com/problems/cousins-in-binary-tree/
+Convenção usada: https://fabiensanglard.net/fd_proxy/doom3/CodeStyleConventions.pdf Link para o LeetCode: https://leetcode.com/problems/merge-intervals/description/
 
 Sou da M2, mas fiz o código da M1. O código em sala estava incompleto e sem o sort ainda. Em casa deu tudo certo e não teve leek de memória. Os resultados do doctor memory foram gerados usando as 3 entradas abaixo:
 
